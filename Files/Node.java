@@ -5,7 +5,7 @@ package files;
  * along with display logic.
  */
 public abstract class Node {
-	private String name;
+	protected String name;
 	
 	public Node(String name) {
 		this.name = name;

@@ -31,11 +31,11 @@ public class Folder extends Node {
     @Override
     public String asHTML() {
         StringBuilder html = new StringBuilder();
-        html.append("<div><span><b>Folder: ").append(getName()).append("</b></span><br>");
-        for (Node child : getChildren()) {
-            html.append(child.asHTML()).append("<br>");
+        html.append(String.format("<strong>%s</strong> (%d bytes)<ul>", name, getSize()));
+        for (Node child : children) {
+            html.append("<li>").append(child.asHTML()).append("</li>");
         }
-        html.append("</div>");
+        html.append("</ul>");
         return html.toString();
     }
 

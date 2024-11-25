@@ -1,13 +1,13 @@
 package files;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class File extends Node {
     private int sizeInBytes;
-    private Date lastModified;
+    private LocalDateTime lastModified;
 
-    public File(String name, int sizeInBytes, Date lastModified) {
+    public File(String name, int sizeInBytes, LocalDateTime lastModified) {
         super(name);
         this.sizeInBytes = sizeInBytes;
         this.lastModified = lastModified;
@@ -19,19 +19,12 @@ public class File extends Node {
         return sizeInBytes;
     }
 
-    // Getter for lastModified
-    public Date getLastModified() {
-        return lastModified;
-    }
-
-    // Provide HTML representation of the file
-    @Override
-    public String asHTML() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String modifiedDate = sdf.format(lastModified);
-        return "<div><span>Name: " + getName() + "</span><br>" +
-                "<span>Size: " + getSize() + " bytes</span><br>" +
-                "<span>Last Modified: " + modifiedDate + "</span></div>";
-    }
+   @Override
+   public String asHTML() {
+       return String.format(
+               "<strong>%s</strong> (%d bytes, last modified %s)",
+               name, sizeInBytes, lastModified
+       );
+   }
 }
 

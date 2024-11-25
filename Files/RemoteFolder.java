@@ -14,16 +14,9 @@ public class RemoteFolder extends Folder {
         return 0;
     }
 
-    // Override asHTML to represent a remote folder (in italics)
     @Override
     public String asHTML() {
-        StringBuilder html = new StringBuilder();
-        html.append("<div style=\"font-style:italic;\"><span><b>Remote Folder: ").append(getName()).append("</b></span><br>");
-        List<Node> children = getChildren();  // Now we can access the children list
-        for (Node child : children) {
-            html.append(child.asHTML()).append("<br>");
-        }
-        html.append("</div>");
-        return html.toString();
+        // Wrap the Folder's HTML output in <em> tags for italicized text.
+        return String.format("<em>%s</em>", super.asHTML());
     }
 }
