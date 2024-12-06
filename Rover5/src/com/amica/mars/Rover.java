@@ -1,5 +1,8 @@
 package com.amica.mars;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 /**
  * In this version, all state and behavior are encapsulated as
  * instance variables and instance methods. There is also an enhanced
@@ -11,21 +14,26 @@ package com.amica.mars;
 public class Rover {
 
 	public enum Direction { NORTH, EAST, SOUTH, WEST }
-	
+
+	private final String id;
 	private int x;
 	private int y;
 	private Direction direction;
-	private StringBuffer commands;
+	private StringBuffer commands = new StringBuffer();
 	
 	public Rover() {
-		this(0, 0, Direction.NORTH);
+		this("DefaultRover",0, 0, Direction.NORTH);
 	}
 	
-	public Rover(int x, int y, Direction direction) {
+	public Rover(String id, int x, int y, Direction direction) {
+		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.direction = direction;
-		this.commands = new StringBuffer();
+	}
+
+	public String getId() {
+		return id;
 	}
 	
 	public int getX() {
@@ -78,7 +86,8 @@ public class Rover {
 		for (int c = 0; c < newCommands.length(); ++c) {
 			char command = newCommands.charAt(c);
 			if (Character.isDigit(command)) {
-				commands.append("M".repeat(Character.getNumericValue(command)));
+				int repeat = Math.min(Character.getNumericValue(command), 100);
+				commands.append("M".repeat(repeat));
 			} else {
 				commands.append(command);
 			}
@@ -92,40 +101,23 @@ public class Rover {
 	public void takeNextStep() {
 		if (isBusy()) {
 			char command = commands.charAt(0);
-			commands.deleteCharAt(0);
-			if (command == 'L') {
-				turnLeft();
-			} else if (command == 'R') {
-				turnRight();
-			} else if (command == 'M') {
-				move();
-			} else {
-				System.out.println("Unrecognized command: " + command);
-			}
+			System.out.println("Processing command: " + command); // Debug log
+			commands.deleteCharAt(0); // Remove the executed command
+			execute(command);
+			System.out.println("Remaining commands: " + commands.toString()); // Debug log
 		}
 	}
-	
-	public static void main(String[] args) {
-		
-		String commands = "4R2R1L2";
-		//String commands = "LL4R2R1L2";
-		//String commands = "R4LL2R17";
-		
-		Rover rover = new Rover();
-		for (int i = 0; i < commands.length(); ++i) {
-			char command = commands.charAt(i);
-			if (command == 'L') {
-				rover.turnLeft();
-			} else if (command == 'R') {
-				rover.turnRight();
-			} else if (Character.isDigit(command)) {
-				rover.move(command - '0');
-			} else {
-				System.out.println("Unrecognized command: " + command);
-				break;
-			}
+	protected void execute(char command) {
+		if (command == 'L') {
+			turnLeft();
+		} else if (command == 'R') {
+			turnRight();
+		} else if (command == 'M') {
+			move();
+		} else {
+			System.out.println("Unrecognized command: " + command);
 		}
-		
-		System.out.println(rover.getStatus());
 	}
+
+
 }
