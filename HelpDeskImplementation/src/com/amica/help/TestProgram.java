@@ -223,6 +223,7 @@ public class TestProgram {
 	}
 
 
+
 	/**
 	 * This method tests that the ijmplementation meets the following requirements.
 	 * Some of this is pre-written, and you will have to develop the rest.
@@ -299,7 +300,7 @@ public class TestProgram {
 		assertEqual(byTech.get("A17440").intValue(), 1557, "Caelem average should be 1557, was %s.");
 		assertEqual(byTech.get("A20265").intValue(), 1458, "Dineh's average should be 1458, was %s.");
 
-		System.out.println();
+		System.out.println("Test 5 complete");
 	}
 
 	/**
@@ -380,8 +381,8 @@ public class TestProgram {
 		test2_History();
 		test3_Assignment();
 		test4_Tags();
-		/*test5_TimeToResolve();
-		test6_TextSearch();
+		test5_TimeToResolve();
+		/*test6_TextSearch();
 		test7_ReopenedTickets();
 		test8_Synonyms();*/
 	}

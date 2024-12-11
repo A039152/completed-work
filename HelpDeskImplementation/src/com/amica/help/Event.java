@@ -9,8 +9,8 @@ public class Event {
     private String note;
     private Ticket.Status newStatus;
 
-    public Event(long timestamp, String note, Ticket.Status newStatus) {
-        this.timestamp = timestamp;
+    public Event(String note, Ticket.Status newStatus) {
+        this.timestamp = Clock.getTime();
         this.note = note;
         this.newStatus = newStatus;
     }

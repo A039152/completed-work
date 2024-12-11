@@ -1,16 +1,13 @@
 package com.amica.help;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Class representing a problem ticket for a help desk.
  *
  * @author Will Provost
  */
-public class Ticket {
+public class Ticket implements Comparable<Ticket>{
 	public enum Status { CREATED, ASSIGNED, RESOLVED }
 	public enum Priority { LOW, MEDIUM, HIGH, URGENT }
 
@@ -28,7 +25,9 @@ public class Ticket {
 		this.originator = originator;
 		this.description = description;
 		this.priority = priority;
+		addEvent(new Event("Created ticket.", Status.CREATED));
 	}
+
 	public void addTags(String... tagsToAdd) {
 		for (String tag : tagsToAdd) {
 			tags.add(tag.toLowerCase()); // Normalize tags to lowercase
@@ -39,7 +38,12 @@ public class Ticket {
 		return tags;
 	}
 
-
+	@Override
+	public int compareTo(Ticket other) {
+		return Comparator.comparing(Ticket::getPriority).reversed() // Descending by priority
+				.thenComparing(Ticket::getID)               // Ascending by ID
+				.compare(this, other);
+	}
 
 
 	public int getID() {
@@ -67,7 +71,7 @@ public class Ticket {
 		this.assignedTechnician = technician;
 
 		// Update the history to reflect assignment
-		addEvent(new Event(Clock.getTime(),
+		addEvent(new Event(
 				"Assigned to Technician " + technician.getID() + ", " + technician.getName() + ".",
 				Status.ASSIGNED));
 	}
@@ -78,7 +82,7 @@ public class Ticket {
 		if (assignedTechnician != null) {
 			assignedTechnician.resolveTicket(this);
 		}
-		addEvent(new Event(Clock.getTime(), note, Status.RESOLVED));
+		addEvent(new Event(note, Status.RESOLVED));
 	}
 
 	public List<Event> getHistory() {
@@ -91,6 +95,23 @@ public class Ticket {
 	}
 
 	public void addNote(String note) {
-		addEvent(new Event(Clock.getTime(), note, null));
+		addEvent(new Event(note, null));
 	}
+
+	public long getResolutionTime() {
+		long creationTime = -1;
+		long resolutionTime = -1;
+
+		for (Event event : history) {
+			if (event.getNewStatus() == Status.CREATED) {
+				creationTime = event.getTimestamp();
+			} else if (event.getNewStatus() == Status.RESOLVED) {
+				resolutionTime = event.getTimestamp();
+				break;
+			}
+		}
+
+		return (creationTime != -1 && resolutionTime != -1) ? (resolutionTime - creationTime) : -1;
+	}
+
 }

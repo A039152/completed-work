@@ -1,7 +1,7 @@
 package com.amica.help;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Represents a technician in the help desk system.
@@ -10,7 +10,7 @@ public class Technician {
     private String ID;
     private String name;
     private int extension;
-    private List<Ticket> activeTickets = new LinkedList<>();
+    private SortedSet<Ticket> activeTickets = new TreeSet<>();
 
     public Technician(String ID, String name, int extension) {
         this.ID = ID;
@@ -30,7 +30,7 @@ public class Technician {
         return extension;
     }
 
-    public List<Ticket> getActiveTickets() {
+    public SortedSet<Ticket> getActiveTickets() {
         return activeTickets;
     }
 

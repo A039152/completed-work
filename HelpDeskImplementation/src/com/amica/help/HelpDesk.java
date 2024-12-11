@@ -5,7 +5,7 @@ import java.util.*;
 public class HelpDesk implements HelpDeskAPI {
 
     private int nextTicketID = 1;
-    private SortedSet<Ticket> tickets = new TreeSet<>(Comparator.comparingInt(Ticket::getID));
+    private SortedSet<Ticket> tickets = new TreeSet<>();
     private Map<Integer, Ticket> ticketMap = new HashMap<>();
     private List<Technician> technicians = new ArrayList<>();
 
@@ -16,12 +16,8 @@ public class HelpDesk implements HelpDeskAPI {
 
     @Override
     public int createTicket(String originator, String description, Ticket.Priority priority) {
-        Ticket ticket = new Ticket(nextTicketID++, originator, description, priority);
+        Ticket ticket = new Ticket(nextTicketID++, originator, description, priority); // Ticket handles the CREATED event
 
-        // Add a "Created ticket." event
-        ticket.addEvent(new Event(Clock.getTime(), "Created ticket.", Ticket.Status.CREATED));
-
-        // Find the least-busy technician
         Technician leastBusyTechnician = findLeastBusyTechnician();
         if (leastBusyTechnician != null) {
             leastBusyTechnician.assignTicket(ticket);
@@ -32,10 +28,6 @@ public class HelpDesk implements HelpDeskAPI {
         ticketMap.put(ticket.getID(), ticket);
         return ticket.getID();
     }
-
-
-
-
 
 
     private Technician findLeastBusyTechnician() {
@@ -136,14 +128,46 @@ public class HelpDesk implements HelpDeskAPI {
 
     @Override
     public int getAverageMinutesToResolve() {
-        // Implementation in Phase 5
-        return 0;
+        long totalTime = 0;
+        int resolvedCount = 0;
+
+        for (Ticket ticket : tickets) {
+            long resolutionTime = ticket.getResolutionTime();
+            if (resolutionTime != -1) { // Include only resolved tickets
+                totalTime += resolutionTime;
+                resolvedCount++;
+            }
+        }
+
+        // Return average in minutes (convert milliseconds to minutes)
+        return resolvedCount > 0 ? (int) (totalTime / (resolvedCount * 60 * 1000)) : 0;
     }
 
     @Override
     public Map<String, Integer> getAverageMinutesToResolvePerTechnician() {
-        // Implementation in Phase 5
-        return null;
+        Map<String, Long> totalTimes = new HashMap<>();
+        Map<String, Integer> resolvedCounts = new HashMap<>();
+
+        for (Ticket ticket : tickets) {
+            long resolutionTime = ticket.getResolutionTime();
+            Technician technician = ticket.getAssignedTechnician();
+
+            if (resolutionTime != -1 && technician != null) {
+                String techID = technician.getID();
+                totalTimes.put(techID, totalTimes.getOrDefault(techID, 0L) + resolutionTime);
+                resolvedCounts.put(techID, resolvedCounts.getOrDefault(techID, 0) + 1);
+            }
+        }
+
+        // Calculate averages and convert to minutes
+        Map<String, Integer> averages = new HashMap<>();
+        for (String techID : totalTimes.keySet()) {
+            long totalTime = totalTimes.get(techID);
+            int count = resolvedCounts.get(techID);
+            averages.put(techID, (int) (totalTime / (count * 60 * 1000)));
+        }
+
+        return averages;
     }
 
     @Override
